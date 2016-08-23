@@ -10,6 +10,10 @@ if (php_sapi_name() === 'cli-server') {
     $_REQUEST['dc_action'] = preg_replace('/\A\//', '', $cli_filepath);
 } else {
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $path = preg_replace('|^' . dirname($_SERVER['SCRIPT_NAME']) . '|', '', $path); // ルートディレクトリ以外に置かれた場合
+    if ($path === null) {
+        throw new ErrorException('REQUEST_URIの抽出に失敗しました');
+    }
     if ($path == '/') {
         $_REQUEST['dc_action'] = 'default/index';
     } else {
